@@ -1,5 +1,6 @@
 package com.filter.filter.security;
 
+import com.filter.filter.service.impl.UserDetailsServiceImpl;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
@@ -21,14 +22,15 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
      private Logger logger = LoggerFactory.getLogger(OncePerRequestFilter.class);
-     private static JwtHelper jwtHelper;
-     private static UserDetailsService userDetailsService;
-    public JwtAuthenticationFilter(JwtHelper jwtHelper, UserDetailsService userDetailsService){
+     private final JwtHelper jwtHelper;
+     private final UserDetailsServiceImpl userDetailsService;
+    public JwtAuthenticationFilter(JwtHelper jwtHelper, UserDetailsServiceImpl userDetailsService){
         this.jwtHelper = jwtHelper;
         this.userDetailsService = userDetailsService;
     }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        logger.info("inside the dofilter internal method of JwtAuthenticationFilter------------------");
               String requestHeader = request.getHeader("Authorization");
           logger.info("Header : {}",requestHeader);
           String username = null;
@@ -55,6 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
           }
 
           if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+              logger.info("inside the Authentication Filter class ----------> : {}", username);
               UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
               Boolean validateToken = this.jwtHelper.validateToken(token, userDetails);
               if(validateToken){
