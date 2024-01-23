@@ -13,6 +13,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     public UserServiceImpl(UserRepo userRepo) {
         this.userRepo = userRepo;
     }
